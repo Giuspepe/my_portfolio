@@ -1,21 +1,21 @@
+import '../models/security.dart';
+
 import 'package:flutter/material.dart';
 
 class SecurityListTile extends StatelessWidget {
-  final IconData icon;
-  final String name;
+  final Security security;
   final String info;
 
-  SecurityListTile({
-    @required this.icon,
-    @required this.name,
-    @required this.info,
-  });
+  SecurityListTile(this.security)
+      : info = security.latestPrice.value != null
+            ? '${(security.latestPrice.value / 10000.0).toStringAsFixed(2)} €'
+            : 'no price info';
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(name),
+      leading: Icon(Icons.business),
+      title: Text(security.name),
       subtitle: Text(info),
       trailing: Icon(Icons.more_vert),
     );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../screens/securities_screen.dart';
-
 class SideDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

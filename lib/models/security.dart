@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:uuid/uuid.dart';
+import 'package:xml/xml.dart';
+import 'package:intl/intl.dart';
 
 class Security {
   String uuid = Uuid().v4();
@@ -22,6 +24,7 @@ class Security {
 
   String latestFeed;
   String latestFeedUrl;
+  LatestSecurityPrice latestPrice;
 
   Map<String, Object> attributes;
 
@@ -45,6 +48,7 @@ class Security {
     this.prices,
     this.latestFeed,
     this.latestFeedUrl,
+    this.latestPrice,
     this.attributes,
     this.events,
     this.properties,
@@ -65,13 +69,33 @@ class LatestSecurityPrice extends SecurityPrice {
 
   int previousClose;
 
+  var _dateFormatter = DateFormat('yyyy-MM-dd');
+
   LatestSecurityPrice({
     this.high,
     this.low,
     this.volume,
+    this.previousClose,
     DateTime date,
     int value,
   }) : super(date: date, value: value);
+
+  LatestSecurityPrice.fromXmlNode(XmlElement latestSecurityPriceNode) {
+    if (latestSecurityPriceNode != null) {
+      try {
+        high = int.parse(latestSecurityPriceNode.getElement('high').text);
+        low = int.parse(latestSecurityPriceNode.getElement('low').text);
+        volume = int.parse(latestSecurityPriceNode.getElement('volume').text);
+        previousClose =
+            int.parse(latestSecurityPriceNode.getElement('previousClose').text);
+
+        date = _dateFormatter.parse(latestSecurityPriceNode.getAttribute('t'));
+        value = int.parse(latestSecurityPriceNode.getAttribute('v'));
+      } catch (error) {
+        throw (error);
+      }
+    }
+  }
 }
 
 enum SecurityEventType { STOCK_SPLIT, NOTE }

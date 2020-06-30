@@ -32,15 +32,9 @@ class _SecuritiesScreenState extends State<SecuritiesScreen> {
       ),
       drawer: SideDrawer(),
       body: ListView.builder(
-        // gridDelegate:
-        //     SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 4),
         itemCount: securitiesList.length,
         itemBuilder: (ctx, i) {
-          return SecurityListTile(
-            icon: Icons.business,
-            name: securitiesList[i].name,
-            info: securitiesList[i].wkn ?? 'none',
-          );
+          return SecurityListTile(securitiesList[i]);
         },
       ),
     );
