@@ -7,4 +7,6 @@ class Repository {
 
   Future<List<Security>> fetchSecuritiesList() =>
       _provider.fetchSecuritiesList();
+
+  // TODO: Future<void> addSecurity() => _provider.addSecurity();
 }

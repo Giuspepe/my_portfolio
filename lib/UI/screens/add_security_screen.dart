@@ -18,7 +18,6 @@ class _AddSecurityScreenState extends State<AddSecurityScreen> {
       appBar: AppBar(
         title: Text('Add Security'),
       ),
-      drawer: SideDrawer(),
       body: AddSecurityForm(),
     );
   }

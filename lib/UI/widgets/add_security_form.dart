@@ -1,6 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+
+import '../../DataLayer/currencies.dart';
 
 class AddSecurityForm extends StatefulWidget {
   @override
@@ -13,7 +13,7 @@ class _AddSecurityFormState extends State<AddSecurityForm> {
   // Security parameters begin
   // String _onlineId;
   String _name;
-  String _currencyCode;
+  String _currencyCode = 'EUR';
   String _note;
   String _isin;
   String _tickerSymbol;
@@ -84,29 +84,22 @@ class _AddSecurityFormState extends State<AddSecurityForm> {
                 _name = value;
               },
             ),
-            DropdownButton<String>(
+            DropdownButtonFormField(
               key: ValueKey('currencyCode'),
-              value: _currencyCode ?? 'EUR',
-              icon: Icon(Icons.arrow_downward),
-              iconSize: 24,
-              elevation: 16,
-              style: TextStyle(color: Colors.deepPurple),
-              underline: Container(
-                height: 2,
-                color: Colors.deepPurpleAccent,
-              ),
-              onChanged: (String newValue) {
-                setState(() {
-                  _currencyCode = newValue;
-                });
+              value: _currencyCode,
+              decoration: InputDecoration(labelText: 'Currency'),
+              onChanged: (value) {
+                _currencyCode = value;
               },
-              items: <String>['EUR', 'USD', '...', 'usw']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+              onSaved: (value) {
+                _currencyCode = value;
+              },
+              items: availableCurrencyUnits.entries
+                  .map((e) => DropdownMenuItem<String>(
+                        child: Text(e.value.displayName),
+                        value: e.value.currencyCode,
+                      ))
+                  .toList(),
             ),
             TextFormField(
               key: ValueKey('isin'),
@@ -152,9 +145,7 @@ class _AddSecurityFormState extends State<AddSecurityForm> {
                 _wkn = value;
               },
             ),
-            SizedBox(
-              height: 12,
-            ),
+            // TODO: implement check box form field for _isRetired
           ],
         ),
       ),
