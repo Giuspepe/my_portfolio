@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:equatable/equatable.dart';
-import '../DataLayer/security.dart';
 
 abstract class SecurityListEvent extends Equatable {}
 

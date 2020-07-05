@@ -6,7 +6,6 @@ import '../widgets/security_list_tile.dart';
 import '../../BLoC/security_bloc.dart';
 import '../../BLoC/states.dart';
 import '../../BLoC/events.dart';
-import '../../DataLayer/repository/repository.dart';
 
 class SecuritiesScreen extends StatelessWidget {
   static const routeName = '/securities';
