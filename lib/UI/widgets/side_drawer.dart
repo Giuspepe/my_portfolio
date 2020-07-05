@@ -10,10 +10,13 @@ class SideDrawer extends StatelessWidget {
             title: Text('My Portfolio'),
             automaticallyImplyLeading: false,
           ),
-          Text(
-            'Wertpapiere',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            textAlign: TextAlign.left,
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Wertpapiere',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
           ),
           ListTile(
             leading: Icon(Icons.monetization_on),

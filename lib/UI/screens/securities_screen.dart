@@ -13,40 +13,61 @@ class SecuritiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('My Portfolio'),
-      ),
-      drawer: SideDrawer(),
-      body: SecuritiesList(),
+    return BlocProvider(
+      create: (context) => SecurityListBloc(repository: Repository()),
+      child: BlocBuilder<SecurityListBloc, SecurityListState>(
+          builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('All Securities'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: state is SecurityListFetchedState
+                    ? () => Navigator.of(context).pushNamed('/securities/add')
+                    : null,
+              )
+            ],
+          ),
+          drawer: SideDrawer(),
+          body: SecuritiesList(state),
+        );
+      }),
     );
   }
 }
 
 class SecuritiesList extends StatelessWidget {
+  final SecurityListState state;
+
+  SecuritiesList(this.state);
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SecurityListBloc(repository: Repository()),
-      child: BlocBuilder<SecurityListBloc, SecurityListState>(
-        builder: (context, state) {
-          print('Securities screen: $state');
-          if (state is SecurityListUninitializedState) {
-            context.bloc<SecurityListBloc>().add(SecurityListFetchEvent());
-            return Container();
-          } else if (state is SecurityListFetchingState) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is SecurityListFetchedState) {
-            return ListView.separated(
-              itemCount: state.securities.length,
-              itemBuilder: (ctx, i) => SecurityListTile(state.securities[i]),
-              separatorBuilder: (context, index) => Divider(),
-            );
-          } else {
-            return Center(child: Text('some other state'));
-          }
-        },
-      ),
+    if (state is SecurityListUninitializedState) {
+      context.bloc<SecurityListBloc>().add(SecurityListFetchEvent());
+      return Container();
+    } else if (state is SecurityListFetchingState) {
+      return Center(child: CircularProgressIndicator());
+    } else if (state is SecurityListFetchedState) {
+      return SecuritiesListView(state);
+    } else {
+      return Center(child: Text('An error occured.'));
+    }
+  }
+}
+
+class SecuritiesListView extends StatelessWidget {
+  final SecurityListFetchedState state;
+
+  SecuritiesListView(this.state);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: state.securities.length,
+      itemBuilder: (ctx, i) => SecurityListTile(state.securities[i]),
+      separatorBuilder: (context, index) => Divider(),
     );
   }
 }

@@ -25,7 +25,6 @@ class SecurityListBloc extends Bloc<SecurityListEvent, SecurityListState> {
 
   @override
   Stream<SecurityListState> mapEventToState(SecurityListEvent event) async* {
-    print('mapeventtostate $event');
     try {
       if (event is SecurityListFetchEvent) {
         yield SecurityListFetchingState();

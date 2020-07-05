@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'UI/screens/securities_screen.dart';
+import 'UI/screens/add_security_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: SecuritiesScreen(),
-      routes: {},
+      routes: {AddSecurityScreen.routeName: (ctx) => AddSecurityScreen()},
     );
   }
 }
