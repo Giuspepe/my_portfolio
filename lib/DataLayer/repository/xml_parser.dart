@@ -1,7 +1,7 @@
 import 'package:xml/xml.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import '../DataLayer/security.dart';
+import '../security.dart';
 
 class XmlProvider {
   Future<List<Security>> fetchSecuritiesList() async {

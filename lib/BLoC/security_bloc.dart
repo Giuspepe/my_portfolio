@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:bloc/bloc.dart';
 
-import '../DataLayer/repository.dart';
+import '../DataLayer/repository/repository.dart';
 
 import 'events.dart';
 import 'states.dart';
 
 class SecurityListBloc extends Bloc<SecurityListEvent, SecurityListState> {
-  final Repository repository;
+  Repository repository;
   SecurityListBloc({@required this.repository})
       : assert(repository != null),
         super(initialState);

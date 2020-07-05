@@ -85,6 +85,7 @@ class _AddSecurityFormState extends State<AddSecurityForm> {
               },
             ),
             DropdownButtonFormField(
+              isExpanded: true,
               key: ValueKey('currencyCode'),
               value: _currencyCode,
               decoration: InputDecoration(labelText: 'Currency'),
@@ -96,7 +97,10 @@ class _AddSecurityFormState extends State<AddSecurityForm> {
               },
               items: availableCurrencyUnits.entries
                   .map((e) => DropdownMenuItem<String>(
-                        child: Text(e.value.displayName),
+                        child: Text(
+                          '${e.value.currencyCode} - ${e.value.displayName}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         value: e.value.currencyCode,
                       ))
                   .toList(),
