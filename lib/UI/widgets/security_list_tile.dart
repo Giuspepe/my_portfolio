@@ -6,9 +6,11 @@ class SecurityListTile extends StatelessWidget {
   final String info;
 
   SecurityListTile(this.security)
-      : info = security.latestPrice.value != null
-            ? '${(security.latestPrice.value / 10000.0).toStringAsFixed(2)} €'
-            : 'no price info';
+      : info = security.latestPrice == null
+            ? 'no latest price info'
+            : security.latestPrice.value == null
+                ? 'latest price info, but no value field'
+                : '${(security.latestPrice.value / 10000.0).toStringAsFixed(2)} €';
 
   @override
   Widget build(BuildContext context) {

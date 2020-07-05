@@ -23,6 +23,16 @@ class SecurityListFetchedState extends SecurityListState {
   List<Object> get props => [securities];
 }
 
+class SecurityListAddingState extends SecurityListState {
+  @override
+  List<Object> get props => const [];
+}
+
+class SecurityListAddedState extends SecurityListState {
+  @override
+  List<Object> get props => const [];
+}
+
 class SecurityListErrorState extends SecurityListState {
   @override
   List<Object> get props => const [];

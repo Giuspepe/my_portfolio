@@ -4,21 +4,33 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../security.dart';
 
 class XmlProvider {
-  Future<List<Security>> fetchSecuritiesList() async {
-    List<Security> loadedSecurities = [];
-    var xmlDocument = XmlDocument.parse(
-        await rootBundle.loadString('assets/PortfolioPerformanceFile.xml'));
-    var securityNodes =
-        xmlDocument.getElement('client').getElement('securities');
-    securityNodes.findElements('security').forEach((security) {
-      var currentSecurity = Security(
-        name: security.getElement('name').text,
-        latestPrice:
-            LatestSecurityPrice.fromXmlNode(security.getElement('latest')),
-      );
-      loadedSecurities.add(currentSecurity);
-    });
+  List<Security> _loadedSecurities = [];
+  bool _isInit = false;
 
-    return loadedSecurities;
+  Future<List<Security>> fetchSecuritiesList() async {
+    if (!_isInit) {
+      _isInit = true;
+      var xmlDocument = XmlDocument.parse(
+          await rootBundle.loadString('assets/PortfolioPerformanceFile.xml'));
+      var securityNodes =
+          xmlDocument.getElement('client').getElement('securities');
+      securityNodes.findElements('security').forEach((security) {
+        var currentSecurity = Security(
+          name: security.getElement('name').text,
+          latestPrice:
+              LatestSecurityPrice.fromXmlNode(security.getElement('latest')),
+        );
+        _loadedSecurities.add(currentSecurity);
+      });
+    }
+
+    return [..._loadedSecurities];
+  }
+
+  Future<void> addSecurity(Security security) async {
+    // add security to state
+    _loadedSecurities.add(security);
+    // TODO: add security to xml
+    return;
   }
 }

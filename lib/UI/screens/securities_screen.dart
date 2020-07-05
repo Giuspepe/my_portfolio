@@ -13,10 +13,8 @@ class SecuritiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SecurityListBloc(repository: Repository()),
-      child: BlocBuilder<SecurityListBloc, SecurityListState>(
-          builder: (context, state) {
+    return BlocBuilder<SecurityListBloc, SecurityListState>(
+      builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
             title: Text('All Securities'),
@@ -32,7 +30,7 @@ class SecuritiesScreen extends StatelessWidget {
           drawer: SideDrawer(),
           body: SecuritiesList(state),
         );
-      }),
+      },
     );
   }
 }
@@ -51,8 +49,11 @@ class SecuritiesList extends StatelessWidget {
       return Center(child: CircularProgressIndicator());
     } else if (state is SecurityListFetchedState) {
       return SecuritiesListView(state);
+    } else if (state is SecurityListAddedState) {
+      context.bloc<SecurityListBloc>().add(SecurityListFetchEvent());
+      return Container();
     } else {
-      return Center(child: Text('An error occured.'));
+      return Center(child: Text('An error occured. Current state: $state'));
     }
   }
 }
