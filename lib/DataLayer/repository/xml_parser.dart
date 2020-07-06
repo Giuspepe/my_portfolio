@@ -17,11 +17,7 @@ class XmlProvider {
       _securityNodes =
           _xmlDocument.getElement('client').getElement('securities');
       _securityNodes.findElements('security').forEach((security) {
-        var currentSecurity = Security(
-          name: security.getElement('name').text,
-          latestPrice:
-              LatestSecurityPrice.fromXmlNode(security.getElement('latest')),
-        );
+        var currentSecurity = xmlToSecurity(security);
         _loadedSecurities.add(currentSecurity);
       });
     }
@@ -32,17 +28,9 @@ class XmlProvider {
   Future<void> addSecurity(Security security) async {
     // add security to state
     _loadedSecurities.add(security);
-    // TODO: add security to xml
-    print('before adding to xml');
-    print(_securityNodes.findElements('security').length);
+    // add security to xml
     _securityNodes.children.add(securityToXml(security));
-    print('after adding to xml');
-    print(_securityNodes.findElements('security').length);
-    print(_xmlDocument
-        .getElement('client')
-        .getElement('securities')
-        .findElements('security')
-        .length);
+    // TODO: save xml persistently
     return;
   }
 
@@ -91,8 +79,7 @@ class XmlProvider {
         builder.element('volume',
             nest: () => builder.text(placeHolderLatestPrice.previousClose));
         builder.element('previousClose',
-            nest: () =>
-                builder.text(placeHolderLatestPrice.previousClose.toString()));
+            nest: () => builder.text(placeHolderLatestPrice.previousClose));
       });
       builder.element('attributes', nest: () => builder.element('map'));
       builder.element('events');
@@ -107,14 +94,79 @@ class XmlProvider {
     return securityNode;
   }
 
-  XmlElement securityToXml2(Security security) {
-    var securityXmlElement = XmlElement(XmlName('security'), const [], [
-      XmlElement(XmlName('uuid'), const [], [XmlText('hi')]),
-      XmlElement(XmlName('name'), const [], [XmlText('hu')]),
-    ]);
-    print('huhu');
-    print(securityXmlElement.toXmlString());
-    print(securityXmlElement.toString());
-    return securityXmlElement;
+  // TODO: move this function to security.dart -> Security.fromXmlElement ?
+  Security xmlToSecurity(XmlElement xmlSecurity) {
+    // TODO: throw error
+    assert(xmlSecurity.name.qualified == 'security');
+
+    String textFromXmlChild(String childElementName) {
+      XmlElement child = xmlSecurity.getElement(childElementName);
+      return child != null ? child.text : null;
+    }
+
+    String uuid = textFromXmlChild('uuid');
+    String name = textFromXmlChild('name');
+    String currencyCode = textFromXmlChild('currencyCode');
+    String note = textFromXmlChild('note');
+    String isin = textFromXmlChild('isin');
+    String tickerSymbol = textFromXmlChild('tickerSymbol');
+    String wkn = textFromXmlChild('wkn');
+    String feed = textFromXmlChild('feed');
+
+    List<SecurityPrice> prices = xmlSecurity
+        .getElement('prices')
+        .findElements('price')
+        .map(
+          (xmlPrice) => SecurityPrice(
+            date: SecurityPrice.dateFormatter.parse(xmlPrice.getAttribute('t')),
+            value: int.parse(xmlPrice.getAttribute('v')),
+          ),
+        )
+        .toList();
+
+    String latestFeed = textFromXmlChild('latestFeed');
+
+    XmlElement xmlLatestPrice = xmlSecurity.getElement('latest');
+    LatestSecurityPrice latest = xmlLatestPrice != null
+        ? LatestSecurityPrice(
+            date: SecurityPrice.dateFormatter
+                .parse(xmlLatestPrice.getAttribute('t')),
+            value: int.parse(xmlLatestPrice.getAttribute('v')),
+            high: int.parse(xmlLatestPrice.getElement('high').text),
+            low: int.parse(xmlLatestPrice.getElement('low').text),
+            volume: int.parse(xmlLatestPrice.getElement('volume').text),
+            previousClose:
+                int.parse(xmlLatestPrice.getElement('previousClose').text),
+          )
+        : null;
+
+    // TODO: attributes and events
+    Map<String, Object> attributes =
+        {}; //xmlSecurity.getElement('attributes').text;
+    List<SecurityEvent> events = []; //xmlSecurity.getElement('events').text;
+    List<SecurityProperty> properties;
+    bool isRetired = 'true' == textFromXmlChild('isRetired');
+
+    return Security(
+      uuid: uuid,
+      onlineId: null, // TODO: onlineId,
+      name: name,
+      currencyCode: currencyCode,
+      note: note,
+      isin: isin,
+      tickerSymbol: tickerSymbol,
+      wkn: wkn,
+      calendar: null, // TODO: calendar,
+      feed: feed,
+      feedURL: null, // TODO: feedURL,
+      prices: prices,
+      latestFeed: latestFeed,
+      latestFeedUrl: null, // TODO: latestFeedUrl,
+      latestPrice: null, // TODO:latestPrice,
+      attributes: attributes,
+      events: events,
+      properties: properties,
+      isRetired: isRetired,
+    );
   }
 }

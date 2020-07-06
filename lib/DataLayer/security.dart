@@ -5,7 +5,7 @@ import 'package:xml/xml.dart';
 import 'package:intl/intl.dart';
 
 class Security {
-  String uuid = Uuid().v4();
+  String uuid;
   String onlineId;
 
   String name;
@@ -33,31 +33,37 @@ class Security {
 
   bool isRetired = false;
 
-  Security({
-    this.uuid,
-    this.onlineId,
-    @required this.name,
-    this.currencyCode,
-    this.note,
-    this.isin,
-    this.tickerSymbol,
-    this.wkn,
-    this.calendar,
-    this.feed,
-    this.feedURL,
-    this.prices,
-    this.latestFeed,
-    this.latestFeedUrl,
-    this.latestPrice,
-    this.attributes,
-    this.events,
-    this.properties,
-  });
+  Security(
+      {this.uuid,
+      this.onlineId,
+      @required this.name,
+      this.currencyCode,
+      this.note,
+      this.isin,
+      this.tickerSymbol,
+      this.wkn,
+      this.calendar,
+      this.feed,
+      this.feedURL,
+      this.prices,
+      this.latestFeed,
+      this.latestFeedUrl,
+      this.latestPrice,
+      this.attributes,
+      this.events,
+      this.properties,
+      this.isRetired}) {
+    if (uuid == null) {
+      uuid = Uuid().v4();
+    }
+  }
 }
 
 class SecurityPrice {
   DateTime date;
   int value;
+
+  static var dateFormatter = DateFormat('yyyy-MM-dd');
 
   SecurityPrice({this.date, this.value});
 }
@@ -68,8 +74,6 @@ class LatestSecurityPrice extends SecurityPrice {
   int volume;
 
   int previousClose;
-
-  var _dateFormatter = DateFormat('yyyy-MM-dd');
 
   LatestSecurityPrice({
     this.high,
@@ -89,7 +93,8 @@ class LatestSecurityPrice extends SecurityPrice {
         previousClose =
             int.parse(latestSecurityPriceNode.getElement('previousClose').text);
 
-        date = _dateFormatter.parse(latestSecurityPriceNode.getAttribute('t'));
+        date = SecurityPrice.dateFormatter
+            .parse(latestSecurityPriceNode.getAttribute('t'));
         value = int.parse(latestSecurityPriceNode.getAttribute('v'));
       } catch (error) {
         throw (error);
